@@ -65,10 +65,33 @@ for skill in sorted((pkg / "skills").glob("*/SKILL.md")):
 	front = head[1] if len(head) > 2 else ""
 	check(re.search(r"^name:\s*\S", front, re.M) is not None and re.search(r"^description:\s*\S", front, re.M) is not None, f"{skill.relative_to(pkg)}: name and description frontmatter required")
 
+# Claude directory — https://claude.com/docs/plugins/pre-submission-checklist
+claude_path = pkg / ".claude-plugin/plugin.json"
+check(claude_path.is_file(), ".claude-plugin/plugin.json: required for the Claude directory")
+if claude_path.is_file():
+	claude = json.loads(claude_path.read_text())
+	check(claude.get("name") == manifest.get("name"), ".claude-plugin name must match .codex-plugin name")
+	check(bool(re.fullmatch(r"[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?", claude.get("name", ""))), ".claude-plugin name: lowercase letters, digits and hyphens, at most 64 chars")
+	for field in ("version", "description", "license"):
+		check(bool(claude.get(field)), f".claude-plugin {field}: set it (license is required for listing)")
+	check(bool(claude.get("author", {}).get("name")), ".claude-plugin author.name: set it")
+readme = pkg / "README.md"
+words = len(re.sub(r"```.*?```", "", readme.read_text(), flags=re.S).split()) if readme.is_file() else 0
+check(words >= 40, f"README.md: Claude shows it as the listing and needs 40+ words outside code blocks (has {words})")
+check((pkg / "LICENSE").is_file(), "LICENSE: required in the plugin folder for the Claude directory")
+check(not (pkg / "bin").exists(), "bin/: claude.ai and Cowork won't install a plugin with a top-level bin/ folder")
+for name, server in mcp.get("mcpServers", {}).items():
+	check(server.get("type") in ("http", "sse", "ws"), f".mcp.json {name}: Claude needs type http, sse or ws")
+	check(str(server.get("url", "")).startswith("https://"), f".mcp.json {name}: url must be https://")
+junk = [p.relative_to(pkg) for p in pkg.rglob("*") if p.name in (".DS_Store", "Thumbs.db", "desktop.ini", "__MACOSX")]
+check(not junk, f"system files block the Claude directory: {junk}")
+large = [p.relative_to(pkg) for p in pkg.rglob("*") if p.is_file() and p.suffix.lower() not in (".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg") and p.stat().st_size > 256 * 1024]
+check(not large, f"non-image files over 256 KiB are held for a Claude reviewer: {large}")
+
 if errors:
 	print("Validation failed:", file=sys.stderr)
 	for e in errors:
 		print(f"  - {e}", file=sys.stderr)
 	sys.exit(1)
 
-print(f"Valid: {manifest['name']} {manifest['version']} — {len(positive)} positive / {len(negative)} negative cases")
+print(f"Valid: {manifest['name']} — OpenAI {manifest['version']} ({len(positive)} positive / {len(negative)} negative cases), Claude {claude['version']}, README {words} words")

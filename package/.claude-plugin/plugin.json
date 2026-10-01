@@ -1,0 +1,15 @@
+{
+  "name": "totalcms",
+  "displayName": "Total CMS",
+  "version": "1.0.0",
+  "description": "Search and read the Total CMS documentation and reference, plus a skill for building Total CMS sites.",
+  "author": {
+    "name": "Aspect Services, LLC",
+    "email": "support@totalcms.co",
+    "url": "https://totalcms.co"
+  },
+  "homepage": "https://totalcms.co/ai",
+  "repository": "https://github.com/totalcms/totalcms-plugins",
+  "license": "MIT",
+  "keywords": ["total cms", "cms", "php", "twig", "documentation", "mcp"]
+}

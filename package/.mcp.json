@@ -1,6 +1,7 @@
 {
   "mcpServers": {
     "totalcms": {
+      "type": "http",
       "url": "https://totalcms.co/mcp"
     }
   }

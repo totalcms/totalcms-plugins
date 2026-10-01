@@ -1,8 +1,14 @@
-# Total CMS OpenAI Plugin Changelog
+# Total CMS Plugins Changelog
 
-All notable changes to the Total CMS OpenAI plugin listing will be documented in this file.
+All notable changes to the Total CMS plugin will be documented in this file. The Claude and OpenAI listings version independently; each entry names the listing it applies to.
 
-## [1.0.0] - 2026-09-30
+## [Unreleased]
+
+### Added
+
+- **Claude directory**: The plugin folder now also serves Anthropic's directory — a `.claude-plugin/plugin.json` manifest (`totalcms` 1.0.0), a user-facing README that Claude shows as the listing, and the license. The shared `.mcp.json` declares `type: http` for Claude; the build drops it from the OpenAI ZIP, so that package is unchanged
+
+## OpenAI [1.0.0] - 2026-09-30
 
 Initial release as a new plugin in the plugin dashboard.
 
