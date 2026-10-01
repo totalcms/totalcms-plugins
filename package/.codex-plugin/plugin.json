@@ -1,0 +1,106 @@
+{
+  "name": "totalcms",
+  "version": "1.0.0",
+  "description": "Search and read the Total CMS documentation and reference from ChatGPT.",
+  "author": {
+    "name": "Aspect Services, LLC",
+    "email": "support@totalcms.co",
+    "url": "https://totalcms.co"
+  },
+  "homepage": "https://totalcms.co/ai",
+  "keywords": [
+    "total cms",
+    "cms",
+    "php",
+    "twig",
+    "documentation",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Total CMS",
+    "shortDescription": "Total CMS docs and reference",
+    "longDescription": "Total CMS is a flat-file PHP CMS. This plugin lets ChatGPT search and read the Total CMS documentation while answering your questions about it.\n\nSearch and read documentation pages, and look up reference entries — Twig functions and filters, field types, REST API endpoints, schema configuration keys, and CLI commands — with their signatures, options, and examples. The documentation is served from totalcms.co, by the version of Total CMS that site runs.\n\nAlso browsable: release notes, the extensions catalog, product comparisons, and buying guides.\n\nThe plugin also includes a Total CMS skill: reference guidance on how Total CMS sites are built, covering collections and schemas, the Site Builder, the tcms CLI, the frontend pipeline, and going live.\n\nWho it's for: developers and designers building sites with Total CMS, and anyone evaluating it.\n\nLimitations: the connector is read-only and serves only Total CMS's published documentation and product content. It cannot see, change, or troubleshoot your own Total CMS site. Answers are only as current and complete as the published documentation. No account, login, or API key is required.",
+    "developerName": "Aspect Services, LLC",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Search the Total CMS documentation",
+      "Read documentation pages",
+      "Look up Twig functions, field types, API endpoints, schema options, and CLI commands",
+      "Read release notes and the extensions catalog",
+      "Total CMS site-building skill"
+    ],
+    "websiteURL": "https://totalcms.co",
+    "supportURL": "https://totalcms.co/support",
+    "privacyPolicyURL": "https://totalcms.co/privacy",
+    "termsOfServiceURL": "https://totalcms.co/terms",
+    "defaultPrompt": [
+      "How do I resize and crop an image in a Total CMS Twig template?",
+      "What options does the tcms builder:init command take?",
+      "What's new in the latest Total CMS release?"
+    ],
+    "brandColor": "#F97318",
+    "logo": "./assets/logo.png",
+    "composerIcon": "./assets/logo.png"
+  },
+  "extensions": {
+    "com.openai": {
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Answer a how-to question from the documentation, with working Twig code taken from the docs rather than the model's training data.",
+              "prompt": "How do I resize and crop an image in a Total CMS Twig template?",
+              "tools_triggered": "docs_search, docs_get",
+              "expected_behavior": "docs_search returns image-related documentation pages, including twig/imageworks. The assistant calls docs_get with path twig/imageworks and answers from that page: cms.media.imagePath() with the w and h parameters and fit: 'crop' (or a crop-{position} / crop-focalpoint variant), e.g. cms.media.imagePath('hero', {w: 800, h: 600, fit: 'crop'}). Parameter names come from the page, not invented."
+            },
+            {
+              "description": "Look up the arguments and options of a CLI command from its reference entry.",
+              "prompt": "What arguments and options does the tcms builder:init command take?",
+              "tools_triggered": "docs_lookup",
+              "expected_behavior": "docs_lookup (kind: cli_command, name: builder:init) returns one exact entry: 'Scaffold a new site from a bundled starter template.' It has one optional argument (starter — omit it to list the available starters) and four options: --list/-l, --force/-f, --frontend, and --json, plus usage examples. The assistant relays these real names."
+            },
+            {
+              "description": "Look up the signature of a Twig function from its reference entry before using it in a template.",
+              "prompt": "What is the exact signature of the cms.collection.objects Twig function in Total CMS?",
+              "tools_triggered": "docs_lookup",
+              "expected_behavior": "docs_lookup (kind: twig_function, name: cms.collection.objects) returns the signature objects(string $collection): array. The assistant reports it verbatim and notes, from the entry's description, that the function takes only the collection id and that results are narrowed with the filterCollection and sorting filters."
+            },
+            {
+              "description": "Report the newest release from the live changelog rather than from static documentation.",
+              "prompt": "What's new in the latest Total CMS release?",
+              "tools_triggered": "latest_release",
+              "expected_behavior": "latest_release returns the newest entry on totalcms.co/releases — at the time of submission, version 3.6.1, 'Fixes for galleries, decks and dates', dated 2026-09-28 — with its summary and the URL /releases/3-6-1. The assistant summarizes the actual items in that release."
+            },
+            {
+              "description": "Search the site's published content, then read one result in full — the search/fetch pair used for research questions.",
+              "prompt": "Search the Total CMS site for WordPress alternatives and summarize what it says.",
+              "tools_triggered": "search, fetch",
+              "expected_behavior": "search returns {id, title, url} results, including roundups:wordpress-alternatives-for-freelancers ('WordPress Alternatives for Freelancers (2026) — Honest Options', /guides/wordpress-alternatives-for-freelancers). The assistant calls fetch with that id, receives the article text, and summarizes it with a link to the URL."
+            }
+          ],
+          "negative": [
+            {
+              "description": "A CMS how-to question about a different product. The connector only documents Total CMS, so it should not be used; answer from general knowledge.",
+              "prompt": "How do I register a custom post type in WordPress?"
+            },
+            {
+              "description": "Names Total CMS, but asks to inspect the user's own server. The connector has no access to any user's site, server, or logs, so no tool should be called; explain that and offer general troubleshooting guidance.",
+              "prompt": "My Total CMS site is returning a 500 error — can you check my server and tell me what's failing?"
+            },
+            {
+              "description": "A content edit. Every tool on this connector is read-only and it is not connected to the user's own site, so no tool should be called; explain that it cannot make changes.",
+              "prompt": "Update the title of my blog post to \"Hello World\" and publish it."
+            }
+          ]
+        },
+        "demo_recording_url": "https://files.weavers.link/v/WCBUKH",
+        "commerce": false
+      },
+      "publication": {
+        "release_notes": "Initial release. Search and read the Total CMS documentation, look up reference entries (Twig functions and filters, field types, REST API endpoints, schema configuration keys, CLI commands), and browse release notes, the extensions catalog, comparisons, and buying guides. Includes the Total CMS site-building skill. The connector is read-only and returns no personal data; see totalcms.co/privacy."
+      }
+    }
+  }
+}
