@@ -9,6 +9,9 @@
     "url": "https://totalcms.co"
   },
   "homepage": "https://totalcms.co/ai",
+  "supportUrl": "https://totalcms.co/support",
+  "documentationUrl": "https://docs.totalcms.co",
+  "termsOfServiceUrl": "https://totalcms.co/terms",
   "privacyPolicyUrl": "https://totalcms.co/privacy",
   "repository": "https://github.com/totalcms/totalcms-plugins",
   "license": "MIT",
