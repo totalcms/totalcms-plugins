@@ -75,9 +75,11 @@ if claude_path.is_file():
 	for field in ("version", "description", "license"):
 		check(bool(claude.get(field)), f".claude-plugin {field}: set it (license is required for listing)")
 	check(bool(claude.get("author", {}).get("name")), ".claude-plugin author.name: set it")
+	check(str(claude.get("privacyPolicyUrl", "")).startswith("https://"), ".claude-plugin privacyPolicyUrl: the directory requires an HTTPS privacy policy URL")
 readme = pkg / "README.md"
 words = len(re.sub(r"```.*?```", "", readme.read_text(), flags=re.S).split()) if readme.is_file() else 0
 check(words >= 40, f"README.md: Claude shows it as the listing and needs 40+ words outside code blocks (has {words})")
+check(readme.is_file() and re.search(r"^#+\s*Privacy Policy\s*$", readme.read_text(), re.M | re.I) is not None and "https://totalcms.co/privacy" in readme.read_text(), "README.md: needs a 'Privacy Policy' section linking https://totalcms.co/privacy")
 check((pkg / "LICENSE").is_file(), "LICENSE: required in the plugin folder for the Claude directory")
 check(not (pkg / "bin").exists(), "bin/: claude.ai and Cowork won't install a plugin with a top-level bin/ folder")
 for name, server in mcp.get("mcpServers", {}).items():

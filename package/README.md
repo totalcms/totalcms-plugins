@@ -31,14 +31,15 @@ and product content. It can't see, change, or troubleshoot your own Total CMS
 site, and answers are only as current and complete as the published
 documentation. No account, login, or API key is required.
 
-## Data and privacy
+## Privacy Policy
+
+Privacy policy: https://totalcms.co/privacy (see "AI connector").
 
 When Claude calls a documentation tool, the plugin sends the tool's inputs — a
 search phrase, a documentation path, or the id of a published page — to
 `https://totalcms.co/mcp`, along with standard request data such as IP address
-and user agent. Nothing else is sent, and the plugin runs no local code. How
-that data is handled is covered by the Total CMS privacy policy:
-https://totalcms.co/privacy
+and user agent. Nothing else is sent, and the plugin runs no local code. Request
+logs are kept for 14 days, and the connector returns no personal data.
 
 ## Support
 

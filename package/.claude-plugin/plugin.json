@@ -9,7 +9,15 @@
     "url": "https://totalcms.co"
   },
   "homepage": "https://totalcms.co/ai",
+  "privacyPolicyUrl": "https://totalcms.co/privacy",
   "repository": "https://github.com/totalcms/totalcms-plugins",
   "license": "MIT",
-  "keywords": ["total cms", "cms", "php", "twig", "documentation", "mcp"]
+  "keywords": [
+    "total cms",
+    "cms",
+    "php",
+    "twig",
+    "documentation",
+    "mcp"
+  ]
 }
