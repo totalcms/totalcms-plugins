@@ -1,8 +1,9 @@
-# Total CMS ChatGPT Plugin
+# Total CMS OpenAI Plugin
 
-The package behind the official Total CMS listing in the ChatGPT plugin
-directory. It connects ChatGPT to the public Total CMS documentation server at
-`https://totalcms.co/mcp` and bundles the Total CMS agent skill.
+The package behind the Total CMS listing in OpenAI's plugin directory, which is
+shared by ChatGPT and Codex. It connects them to the public Total CMS
+documentation server at `https://totalcms.co/mcp` and bundles the Total CMS
+agent skill.
 
 This repo holds only the listing: metadata, review test cases, the logo, and a
 copy of the skill. The MCP server itself is the Total CMS docs extension running
@@ -19,7 +20,7 @@ package/                  # exactly what goes in the ZIP
   assets/logo.png             # square listing + composer icon (1024×1024)
   skills/totalcms/            # synced from core's resources/skill — don't edit here
 bin/
-  build.sh                # sync skill → validate → dist/totalcms-chatgpt-plugin-<version>.zip
+  build.sh                # sync skill → validate → dist/totalcms-openai-plugin-<version>.zip
   validate.py             # OpenAI's submission limits and required fields
 ```
 

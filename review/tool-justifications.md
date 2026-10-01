@@ -1,4 +1,4 @@
-# ChatGPT plugin submission — tool annotation justifications
+# OpenAI plugin submission — tool annotation justifications
 
 > Paste into the plugin dashboard when it asks for annotation justifications. Checked against the live server's 19 tools on 2026-09-30.
 

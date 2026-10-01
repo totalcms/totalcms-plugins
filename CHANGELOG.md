@@ -1,6 +1,6 @@
-# Total CMS ChatGPT Plugin Changelog
+# Total CMS OpenAI Plugin Changelog
 
-All notable changes to the Total CMS ChatGPT plugin listing will be documented in this file.
+All notable changes to the Total CMS OpenAI plugin listing will be documented in this file.
 
 ## [1.0.0] - 2026-09-30
 
