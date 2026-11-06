@@ -1,6 +1,6 @@
 {
   "name": "totalcms",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Search and read the Total CMS documentation and reference from ChatGPT.",
   "author": {
     "name": "Aspect Services, LLC",
@@ -59,7 +59,7 @@
               "description": "Look up the arguments and options of a CLI command from its reference entry.",
               "prompt": "What arguments and options does the tcms builder:init command take?",
               "tools_triggered": "docs_lookup",
-              "expected_behavior": "docs_lookup (kind: cli_command, name: builder:init) returns one exact entry: 'Scaffold a new site from a bundled starter template.' It has one optional argument (starter — omit it to list the available starters) and four options: --list/-l, --force/-f, --frontend, and --json, plus usage examples. The assistant relays these real names."
+              "expected_behavior": "docs_lookup (kind: cli_command, name: builder:init) returns one exact entry: 'Scaffold a new site from a bundled starter template.' It has one optional argument (starter — omit it to list the available starters) and five options: --list/-l, --force/-f, --frontend, --no-build, and --json, plus usage examples. The assistant relays these real names."
             },
             {
               "description": "Look up the signature of a Twig function from its reference entry before using it in a template.",
@@ -99,7 +99,7 @@
         "commerce": false
       },
       "publication": {
-        "release_notes": "Updated Total CMS skill for 3.6.3: new guidance for member-submitted content (owned collections, protected fields, public registration) and a troubleshooting guide, with the existing references brought up to date. The connector is unchanged: read-only, no personal data."
+        "release_notes": "Updated Total CMS skill: the Vite pipeline now installs at the project root, plus the blogdown Markdown blog schema and the Client Help extension. The connector is unchanged: read-only, no personal data."
       }
     }
   }

@@ -1,17 +1,21 @@
 # Total CMS Plugins
 
-The Total CMS plugin for the two AI plugin directories:
+The Total CMS plugin for the three AI plugin directories:
 
 - **Claude** — Anthropic's directory (claude.ai, the desktop and mobile apps,
   Cowork, and Claude Code), which reads the plugin straight from this repo
 - **OpenAI** — the directory shared by ChatGPT and Codex, which takes a ZIP
   upload
+- **Cursor** — Cursor's marketplace, which reads the plugin from this repo
 
-Both get the same plugin: a read-only connection to the public Total CMS
+All three get the same plugin: a read-only connection to the public Total CMS
 documentation server at `https://totalcms.co/mcp`, and the Total CMS agent
 skill. The MCP server itself is the Total CMS docs extension running on
-totalcms.co; changes to its tools reach both directories without a new plugin
+totalcms.co; changes to its tools reach every directory without a new plugin
 version.
+
+This repo holds no Total CMS code. Core is proprietary and is never part of a
+plugin; the plugin is only manifests, a server URL, a logo and the skill text.
 
 ## Listings
 
@@ -24,9 +28,11 @@ version.
 ## Layout
 
 ```
-package/                          # the plugin folder, shared by both directories
+.cursor-plugin/marketplace.json   # points Cursor at package/
+package/                          # the plugin folder, shared by all three directories
   .claude-plugin/plugin.json      # Claude manifest
   .codex-plugin/plugin.json       # OpenAI manifest: listing, review test cases, demo URL, release notes
+  .cursor-plugin/plugin.json      # Cursor manifest
   .mcp.json                       # the one MCP server: https://totalcms.co/mcp
   skills/totalcms/                # synced from core's resources/skill — don't edit here
   assets/logo.png                 # square icon (1024×1024)
@@ -34,16 +40,19 @@ package/                          # the plugin folder, shared by both directorie
   LICENSE                         # Claude requires one in the plugin folder
 bin/
   build.sh                        # sync skill → validate → dist/totalcms-openai-plugin-<version>.zip
-  validate.py                     # both directories' submission requirements
+  validate.py                     # every directory's submission requirements
 review/
   tool-justifications.md          # OpenAI annotation justifications, paste-ready
 ```
 
 `.mcp.json` carries `"type": "http"` because Claude requires it; the build drops
 it from the OpenAI ZIP, whose Codex format doesn't use it. The OpenAI ZIP also
-leaves out the Claude manifest, README, and LICENSE.
+leaves out the Claude and Cursor manifests, README, and LICENSE.
 
-Keep the plugin `name` as `totalcms` in both manifests — it's the listing's
+Cursor's default MCP file is `mcp.json`, so its manifest names `./.mcp.json`
+explicitly. It finds the skill in `skills/` on its own.
+
+Keep the plugin `name` as `totalcms` in all three manifests — it's the listing's
 identity in both directories.
 
 ## Building
@@ -91,8 +100,23 @@ Test cases and the demo recording URL (`review.demo_recording_url`) are imported
 from the ZIP and read-only in the dashboard — change them here and upload again.
 The dashboard refuses to submit without the demo URL in the package.
 
-The two manifests version independently; each directory has its own release
+The manifests version independently; each directory has its own release
 history.
+
+## Releasing to Cursor
+
+Cursor reads this repo and reviews each update by hand before publishing it.
+
+1. Bump `version` in `package/.cursor-plugin/plugin.json`.
+2. Run `bin/build.sh`, commit, and push.
+3. Test locally: copy `package/` to `~/.cursor/plugins/local/totalcms`, run
+   **Developer: Reload Window**, and confirm the skill and MCP server both load.
+4. First listing: apply at https://cursor.com/marketplace/publish. After that,
+   send Cursor a re-index request instead of a new application.
+
+The repo must stay public and open source: Cursor requires both. The application
+form's logo is `assets/logo-plate.png`, because Cursor asks for a 1:1 image on a
+background plate. It's kept outside `package/` so it doesn't ship in any plugin.
 
 ## The connector listing
 

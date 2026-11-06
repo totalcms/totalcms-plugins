@@ -1,0 +1,17 @@
+{
+  "name": "totalcms",
+  "owner": {
+    "name": "Aspect Services, LLC",
+    "email": "support@totalcms.co"
+  },
+  "metadata": {
+    "description": "The Total CMS plugin for Cursor."
+  },
+  "plugins": [
+    {
+      "name": "totalcms",
+      "source": "package",
+      "description": "Search and read the Total CMS documentation and reference, plus a skill for building Total CMS sites."
+    }
+  ]
+}

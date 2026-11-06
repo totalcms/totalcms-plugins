@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-# Build and check the Total CMS plugin for both directories.
+# Build and check the Total CMS plugin for all three directories.
 #
 #   bin/build.sh
 #
-# package/ is one plugin folder that serves both:
+# package/ is one plugin folder that serves all three:
 #   - Claude's directory reads it straight from GitHub (.claude-plugin/plugin.json)
 #   - OpenAI's directory takes a ZIP upload (.codex-plugin/plugin.json)
+#   - Cursor's marketplace reads it from GitHub (.cursor-plugin/plugin.json),
+#     through .cursor-plugin/marketplace.json at the repo root
 #
 # 1. Syncs the Total CMS skill from core (resources/skill is the source of truth).
-# 2. Validates against OpenAI's limits, Claude's directory checks, and
+# 2. Validates against OpenAI's limits, Claude's and Cursor's directory checks, and
 #    `claude plugin validate` when Claude Code is installed.
 # 3. Zips the OpenAI package to dist/totalcms-openai-plugin-<version>.zip.
 #

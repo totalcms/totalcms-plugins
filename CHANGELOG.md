@@ -1,6 +1,19 @@
 # Total CMS Plugins Changelog
 
-All notable changes to the Total CMS plugin will be documented in this file. The Claude and OpenAI listings version independently; each entry names the listing it applies to.
+All notable changes to the Total CMS plugin will be documented in this file. The Claude, OpenAI and Cursor listings version independently; each entry names the listing it applies to.
+
+## [1.2.0] - 2026-11-06
+
+All listings.
+
+### Added
+
+- **Cursor marketplace**: The plugin folder now also serves Cursor, with a `.cursor-plugin/plugin.json` manifest and a `.cursor-plugin/marketplace.json` at the repo root that points at `package/`. `bin/validate.py` checks both
+
+### Changed
+
+- **Skill**: Resync with Total CMS 3.6.7
+- **README**: The plugin's README names your AI assistant rather than Claude, because Cursor shows it too
 
 ## [1.1.0] - 2026-10-23
 

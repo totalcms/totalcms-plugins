@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Check the plugin package against OpenAI's submission requirements.
+"""Check the plugin package against each directory's submission requirements.
 
-Limits come from https://developers.openai.com/plugins/deploy/submission
-(manifest field reference). Exits non-zero on any failure.
+OpenAI limits come from https://developers.openai.com/plugins/deploy/submission
+(manifest field reference), Cursor's from https://cursor.com/docs/reference/plugins.
+Exits non-zero on any failure.
 """
 import json
 import re
@@ -90,10 +91,31 @@ check(not junk, f"system files block the Claude directory: {junk}")
 large = [p.relative_to(pkg) for p in pkg.rglob("*") if p.is_file() and p.suffix.lower() not in (".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg") and p.stat().st_size > 256 * 1024]
 check(not large, f"non-image files over 256 KiB are held for a Claude reviewer: {large}")
 
+# Cursor marketplace — https://cursor.com/docs/reference/plugins
+cursor_path = pkg / ".cursor-plugin/plugin.json"
+market_path = pkg.resolve().parent / ".cursor-plugin/marketplace.json"
+cursor = json.loads(cursor_path.read_text()) if cursor_path.is_file() else {}
+check(cursor_path.is_file(), ".cursor-plugin/plugin.json: required for the Cursor marketplace")
+if cursor:
+	check(cursor.get("name") == manifest.get("name"), ".cursor-plugin name must match .codex-plugin name")
+	check(bool(re.fullmatch(r"[a-z0-9]([a-z0-9.-]*[a-z0-9])?", cursor.get("name", ""))), ".cursor-plugin name: lowercase kebab-case")
+	check(bool(re.fullmatch(r"\d+\.\d+\.\d+", cursor.get("version", ""))), ".cursor-plugin version: semantic version required")
+	check(bool(cursor.get("description")), ".cursor-plugin description: required for listing")
+	check(bool(cursor.get("author", {}).get("name")), ".cursor-plugin author.name: set it")
+	for field in ("logo", "mcpServers"):
+		value = str(cursor.get(field, ""))
+		check(bool(value) and not value.startswith("/") and ".." not in value and (pkg / value).is_file(), f".cursor-plugin {field}: needs a relative path to a file in the plugin folder")
+check(market_path.is_file(), ".cursor-plugin/marketplace.json: required at the repo root, because the plugin lives in a subfolder")
+if market_path.is_file():
+	market = json.loads(market_path.read_text())
+	check(bool(market.get("name")) and bool(market.get("owner", {}).get("name")), "marketplace.json: name and owner.name required")
+	entries = [p for p in market.get("plugins", []) if p.get("name") == cursor.get("name")]
+	check(len(entries) == 1 and entries[0].get("source") == pkg.resolve().name, "marketplace.json: needs one entry for the plugin, with source set to the plugin folder")
+
 if errors:
 	print("Validation failed:", file=sys.stderr)
 	for e in errors:
 		print(f"  - {e}", file=sys.stderr)
 	sys.exit(1)
 
-print(f"Valid: {manifest['name']} — OpenAI {manifest['version']} ({len(positive)} positive / {len(negative)} negative cases), Claude {claude['version']}, README {words} words")
+print(f"Valid: {manifest['name']} — OpenAI {manifest['version']} ({len(positive)} positive / {len(negative)} negative cases), Claude {claude['version']}, Cursor {cursor['version']}, README {words} words")

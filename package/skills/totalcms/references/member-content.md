@@ -14,7 +14,8 @@ A collection on the `auth` schema (or one that inherits it) holds the
 members. Turn on **Allow Public Registration** and **Require Email
 Verification** in its Public Registration section. **Registration Groups**
 give new members the access group that grants `create` and `update` on the
-member collections. Write that group with `vendor/bin/tcms access-group:set <id> -`
+member collections. Grant `read` there too: since 3.6.5 a member with no group
+has no collection access at all, not even to their own objects. Write that group with `vendor/bin/tcms access-group:set <id> -`
 (or `access-group:patch`), never by editing `.system/access-groups.json`.
 Docs: `forms/options.md`, `auth/access-groups.md`.
 
@@ -25,6 +26,15 @@ to its `index`**, then make it the collection's Owner Property:
 `vendor/bin/tcms collection:update <collection> --set ownerProperty=owner`.
 Set `ownerCollection` to the members collection the same way when the site
 has more than one auth collection. Docs: `collections/settings.md#ownerproperty`.
+
+Set `accessCollection` to the members collection on every collection with
+group-protected files, and on every Site Builder page that uses the `auth`
+feature (a page field, next to `accessGroups`). Signed-out visitors are then
+sent to `/admin/login/<members>` instead of the default login, which cannot
+sign members in. To protect a collection's object pages (`/blog/{id}`), add a
+builder page with that route and `auth` on; the collection URL itself has no
+gate. Docs: `collections/settings.md#accesscollection`,
+`site-builder/overview.md#protecting-collection-pages`.
 
 What core then does for every user who is not a super admin:
 
@@ -52,15 +62,19 @@ Make the moderation flags protected in the schema (`schemas/validation.md`):
 | `"protected": {"value": true}` | Every member save goes back to draft. Review every change. |
 | `"protected": {"value": false}` | Nothing is reviewed. |
 
-Also protect what only the admin decides: `featured`, `approved`, dates, and
-any counts an automation keeps. A protected field in a member's form is not
-an error: the rest of the save goes through and the protected value just
-does not change.
+Also protect what only the admin decides: `featured`, `approved` and dates. A
+protected field in a member's form is not an error: the rest of the save goes
+through and the protected value just does not change.
+
+Counts and totals that an automation or extension computes take
+`"serverOnly": true` instead. Not even an admin can set them, the admin form
+shows them read-only, and the code that keeps them writes as the system. A
+server-only property cannot be `required`.
 
 ## 4. The account page: forms with `cms.form.builder`
 
 One page where a member manages their work. List their objects with
-`cms.collection.objects(...)|filter(o => o.owner == me.id)` and open a form
+`cms.collection.query(..., {filter: [{property: 'owner', value: me.id}]}).objects` and open a form
 to add or edit:
 
 - **Add:** `addOnly: true`, so the form can only create. Alert the admin with

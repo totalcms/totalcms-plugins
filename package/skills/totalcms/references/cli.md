@@ -36,7 +36,7 @@ vendor/bin/tcms collection:list --json | jq -r '.[].id'
 
 ### Site status
 - `info` — site status, version, configuration
-- `check` — the Server Checker on the CLI: integrity, license, permissions, PHP extensions; exits 1 when the install cannot run, so deploy scripts can gate on it
+- `check` — the Server Checker on the CLI: integrity, license, permissions, PHP extensions, plus a Security section (public data folder, exposed files, registration groups, debug, headers; fixes in `operations/security.md`). Exits 1 when the install cannot run or a non-ignored security finding is critical, so deploy scripts can gate on it. `--no-security` skips the section; `--json` adds a `security` key; ignore ids via `$settings['security']['ignore']`
 - `cache:clear` — clear all caches (run after template edits if stale)
 - `deploy` — post-deploy cleanup: wipe DI container, clear caches, run migrations
 
@@ -51,6 +51,10 @@ vendor/bin/tcms collection:list --json | jq -r '.[].id'
 - `collection:update <id> --set key=value` — change some settings, keep the rest; a dot
   reaches into a map (`--set mcp.access=authenticated`, `--set properties.price.label=Cost`),
   or pass JSON (`-` for stdin). Maps (`properties`, `mcp`, `seo`, …) merge key by key, null removes
+- `collection:delete <id>` — delete a collection's SETTINGS; objects stay on disk and come back
+  if the id is recreated. Refuses login collections; stops when a Data View, another
+  collection's owner/access collection or `auth.publicRegistration` still refers to it
+  (`--force` overrides). Confirm with the user first
 
 ### Access groups
 `.system/access-groups.json` is not a collection — never edit it by hand.
@@ -87,14 +91,18 @@ Every save keeps the version it replaced; every delete keeps the final state
 - `schema:get totalcms --json` — the reference schema: every field type with settings
   and help text, to copy from
 - `schema:lint [id]` — validate stored schemas WITHOUT saving; run after editing
-  schema JSON in place. Errors = structural breakage, warnings = missing
+  schema JSON in place. Errors = structural breakage (incl. a formgrid row with
+  fewer names than the widest row, which drops the form layout), warnings = missing
   help text (which feeds the MCP tool catalog). `--strict` fails on warnings.
+- `schema:delete <id>` — delete a custom schema; refused while a collection uses it or
+  another schema inherits it. A copy goes to `.system/backups/schemas/`
 
 ### Site Builder
-- `builder:init [starter]` — scaffold from a starter (`business`/`blog`/`portfolio`/`minimal`); `--frontend`, `--force`, `--list`
-- `builder:frontend` — install the Vite frontend pipeline
+- `builder:init [starter]` — scaffold from a starter (`business`/`blog`/`portfolio`/`minimal`); `--frontend`, `--no-build`, `--force`, `--list`
+- `builder:frontend` — install and build the Vite pipeline at the project root; `--no-build`, `--dry-run`; stops if `package.json` exists
 - `builder:routes` — list every route the page router serves; flags conflicts
 - `builder:history` — list/restore snapshot versions of a builder template
+- `starter:export <dir> --name=vendor/starter-x` — write a clean copy of this site as a Composer starter (users, credentials, secrets and runtime state left out; `--structure-only` drops content)
 
 ### Bulk data
 - `jumpstart:export` / `jumpstart:import` — full-site data import/export
@@ -113,8 +121,9 @@ Every save keeps the version it replaced; every delete keeps the final state
 - `oauth:gc` — prune expired grants and stale self-registered clients
 
 ### Maintenance
-- `repair:index <collection>` — rebuild `.index.json` + count from objects on disk (`--all` for every collection)
+- `repair:index <collection>` — rebuild `.index.json` + count from objects on disk (`--all` for every collection); `--check` only reports unreadable files, index/file drift and a wrong count, changes nothing, exits 1 on a problem
 - `repair:files` — rebuild blanked file/image/gallery metadata from files on disk
+- `imageworks:warm <collection> [property]` — pre-build the ImageWorks cache so the first visit is fast. `property` is an image, gallery or video (its poster), or `parent/child` for a card/deck image (`mydeck/photo` = every deck item). A plain run warms image and gallery properties only; name videos, cards and decks. Variants are required: `--widths=480,768 --formats=avif,webp,native` (grid), `--picture` (what `cms.render.picture()` uses by default + native), `--params="w=800&fit=crop"`, `--preset`, `--url`; `--id=a,b`, `--dry-run` (count first), `--memory`. Skips cached files; exits 1 on failures; run it as the web server user
 - `search:reindex [collection]` — re-index against the active search provider (`--all` site-wide)
 - `jobs:process` / `automations:process` — process queued jobs / fire due automations
 - `update:check` / `update:apply` / `update:rollback`
