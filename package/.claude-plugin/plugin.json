@@ -1,7 +1,7 @@
 {
   "name": "totalcms",
   "displayName": "Total CMS",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Search and read the Total CMS documentation and reference, plus a skill for building Total CMS sites.",
   "author": {
     "name": "Aspect Services, LLC",

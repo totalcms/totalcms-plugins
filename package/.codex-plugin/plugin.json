@@ -1,6 +1,6 @@
 {
   "name": "totalcms",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Search and read the Total CMS documentation and reference from ChatGPT.",
   "author": {
     "name": "Aspect Services, LLC",
@@ -99,7 +99,7 @@
         "commerce": false
       },
       "publication": {
-        "release_notes": "Updated Total CMS skill: the Vite pipeline now installs at the project root, plus the blogdown Markdown blog schema and the Client Help extension. The connector is unchanged: read-only, no personal data."
+        "release_notes": "Updated Total CMS skill: visitors can send files to a depot from a public page, a bare form builder renders every field, and passcode protection works on Stacks pages. The connector is unchanged: read-only, no personal data."
       }
     }
   }

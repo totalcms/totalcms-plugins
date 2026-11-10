@@ -2,6 +2,14 @@
 
 All notable changes to the Total CMS plugin will be documented in this file. The Claude, OpenAI and Cursor listings version independently; each entry names the listing it applies to.
 
+## [1.2.1] - 2026-11-09
+
+All listings.
+
+### Changed
+
+- **Skill**: Resync with Total CMS 3.6.8. Adds public file drops to a depot (`publicUpload` and `cms.form.depotDrop()`), passcode protection on Stacks pages, the Client Help extension, the bare `cms.form.builder()` form, and deck item IDs; the deploy workflow now builds the frontend from the project root
+
 ## [1.2.0] - 2026-11-06
 
 All listings.

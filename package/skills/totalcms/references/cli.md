@@ -37,7 +37,8 @@ vendor/bin/tcms collection:list --json | jq -r '.[].id'
 ### Site status
 - `info` — site status, version, configuration
 - `check` — the Server Checker on the CLI: integrity, license, permissions, PHP extensions, plus a Security section (public data folder, exposed files, registration groups, debug, headers; fixes in `operations/security.md`). Exits 1 when the install cannot run or a non-ignored security finding is critical, so deploy scripts can gate on it. `--no-security` skips the section; `--json` adds a `security` key; ignore ids via `$settings['security']['ignore']`
-- `cache:clear` — clear all caches (run after template edits if stale)
+- `setup:admin --email=… [--name=…] --password-stdin` — create the first admin and finish setup without the wizard; password on stdin only, 8+ chars; exits 1 when an admin already exists
+- `cache:clear` — clear all caches. Template edits don't need it, except for a `{% cache %}` block, which keeps its output until its `ttl`
 - `deploy` — post-deploy cleanup: wipe DI container, clear caches, run migrations
 
 ### Collections
@@ -102,7 +103,7 @@ Every save keeps the version it replaced; every delete keeps the final state
 - `builder:frontend` — install and build the Vite pipeline at the project root; `--no-build`, `--dry-run`; stops if `package.json` exists
 - `builder:routes` — list every route the page router serves; flags conflicts
 - `builder:history` — list/restore snapshot versions of a builder template
-- `starter:export <dir> --name=vendor/starter-x` — write a clean copy of this site as a Composer starter (users, credentials, secrets and runtime state left out; `--structure-only` drops content)
+- `starter:export <dir> --name=vendor/starter-x` — write a clean copy of this site as a Composer starter (users, credentials, secrets and runtime state left out; `--structure-only` drops content; a `.starterignore` at the project root lists more paths to leave out)
 
 ### Bulk data
 - `jumpstart:export` / `jumpstart:import` — full-site data import/export
